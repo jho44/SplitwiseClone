@@ -1,0 +1,25 @@
+/* @tailwind base;
+@tailwind components;
+@tailwind utilities; */
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+@layer base {
+  :root {
+    --teal: #1cc29f;
+    --black-100: #373a3f;
+    --black-200: #393a3f;
+    --gray-100: #e7e8ed;
+    --gray-200: #b2b2b2;
+    --gray-300: #6e757d;
+    --gray-400: #52595f;
+    --gray-500: #373a3f;
+    --blue-gray: #bdc9d5;
+    --green: #1d856c;
+  }
+}
+
+* {
+  color: var(--black-100);
+}

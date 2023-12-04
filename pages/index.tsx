@@ -1,60 +1,42 @@
-import React from "react"
-import { GetStaticProps } from "next"
-import Layout from "../components/Layout"
-import Post, { PostProps } from "../components/Post"
+import SignIn from "@/components/signIn/SignIn";
+import { authOptions } from "@/pages/api/auth/[...nextauth]";
+import { getServerSession } from "next-auth/next";
+import prisma from "@/lib/prisma";
 
-export const getStaticProps: GetStaticProps = async () => {
-  const feed = [
-    {
-      id: "1",
-      title: "Prisma is the perfect ORM for Next.js",
-      content: "[Prisma](https://github.com/prisma/prisma) and Next.js go _great_ together!",
-      published: false,
-      author: {
-        name: "Nikolas Burk",
-        email: "burk@prisma.io",
+export async function getServerSideProps(context) {
+  const session = await getServerSession(context.req, context.res, authOptions);
+  if (session) {
+    let user = await prisma.user.findUnique({
+      where: {
+        email: session.user.email,
       },
-    },
-  ]
-  return { 
-    props: { feed }, 
-    revalidate: 10 
+    });
+
+    if (!user) {
+      user = await prisma.user.create({
+        data: {
+          name: session.user.name,
+          email: session.user.email,
+        },
+      });
+      // TODO: redirect to onboarding
+    }
+
+    return {
+      redirect: {
+        destination: "/dashboard",
+        permanent: false,
+      },
+    };
   }
+
+  return {
+    props: {},
+  };
 }
 
-type Props = {
-  feed: PostProps[]
-}
+const IndexPage = () => {
+  return <SignIn />;
+};
 
-const Blog: React.FC<Props> = (props) => {
-  return (
-    <Layout>
-      <div className="page">
-        <h1>Public Feed</h1>
-        <main>
-          {props.feed.map((post) => (
-            <div key={post.id} className="post">
-              <Post post={post} />
-            </div>
-          ))}
-        </main>
-      </div>
-      <style jsx>{`
-        .post {
-          background: white;
-          transition: box-shadow 0.1s ease-in;
-        }
-
-        .post:hover {
-          box-shadow: 1px 1px 3px #aaa;
-        }
-
-        .post + .post {
-          margin-top: 2rem;
-        }
-      `}</style>
-    </Layout>
-  )
-}
-
-export default Blog
+export default IndexPage;

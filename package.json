@@ -5,20 +5,29 @@
   "scripts": {
     "dev": "next",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "format": "prettier . --write"
   },
   "keywords": [],
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "next": "12.0.10",
-    "react": "17.0.2",
-    "react-dom": "17.0.2",
-    "react-markdown": "8.0.0"
+    "@prisma/client": "^5.6.0",
+    "next": "^14.0.3",
+    "next-auth": "^4.24.5",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-markdown": "8.0.0",
+    "vercel": "^32.6.0"
   },
   "devDependencies": {
     "@types/node": "17.0.14",
     "@types/react": "17.0.38",
+    "autoprefixer": "^10.4.16",
+    "postcss": "^8.4.32",
+    "prettier": "^3.1.0",
+    "prisma": "^5.6.0",
+    "tailwindcss": "^3.3.5",
     "typescript": "4.5.5"
   }
 }
