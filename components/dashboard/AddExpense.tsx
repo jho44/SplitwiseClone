@@ -1,9 +1,19 @@
 import Image from "next/image";
+import { useEffect, useRef } from "react";
 
 const AddExpense = () => {
+  const recipientsInput = useRef<HTMLInputElement>();
+  useEffect(() => {
+    if (recipientsInput.current) recipientsInput.current.focus();
+  }, []);
+  const preventLosingInputFocus = (e) => {
+    if (!e.relatedTarget) {
+      e.target.focus();
+    }
+  };
   return (
-    <div className="h-screen bg-white z-[1] relative flex flex-col">
-      <div className="p-3 pt-4 border-b-[1px] border-b-gray-100 flex flex-col gap-[26px]">
+    <div className="h-full w-full bg-white z-[1] relative flex items-center justify-center">
+      <div className="absolute w-full top-0 p-3 pt-4 border-b-[1px] border-b-gray-100 flex flex-col gap-[26px]">
         <div className="flex items-center justify-between font-montserrat">
           <Image
             src="/icons/close.svg"
@@ -24,12 +34,14 @@ const AddExpense = () => {
             With <span className="font-bold">you</span> and:
           </label>
           <input
+            onBlur={preventLosingInputFocus}
+            ref={recipientsInput}
             className="placeholder:opacity-70 grow"
             placeholder="Names / emails / phones"
           />
         </div>
       </div>
-      <div className="flex flex-col gap-4 items-center justify-center flex-1">
+      <div className="h-full flex flex-col gap-4 items-center justify-center">
         <div className="flex gap-2 h-12">
           <button className="p-2 rounded border-[1px] border-gray-100 shadow-[0_2px_0_0_rgba(0,0,0,0.40)]">
             <Image
@@ -40,8 +52,14 @@ const AddExpense = () => {
             />
           </button>
           <input
+            onBlur={preventLosingInputFocus}
             className="outline-0 w-[222px] text-xl h-full border-b-[1px] border-b-black-200 placeholder:text-blue-gray"
             placeholder="Enter a description"
+            onFocus={() => {
+              setTimeout(() => {
+                document.scrollingElement.scrollTop = 0;
+              }, 500);
+            }}
           />
         </div>
         <div className="flex gap-2 h-12">
@@ -54,9 +72,15 @@ const AddExpense = () => {
             />
           </button>
           <input
+            onBlur={preventLosingInputFocus}
             type="number"
             className="outline-0 w-[222px] text-[28px] font-semibold h-full border-b-[1px] border-b-black-200 placeholder:text-blue-gray"
             placeholder="0.00"
+            onFocus={() => {
+              setTimeout(() => {
+                document.scrollingElement.scrollTop = 0;
+              }, 500);
+            }}
           />
         </div>
       </div>

@@ -1,7 +1,7 @@
 import React from "react";
 
 export type ButtonProps = {
-  colorType: "teal" | "black";
+  colorType: "teal" | "black-100";
   onClick: () => any;
 };
 

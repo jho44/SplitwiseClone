@@ -32,7 +32,7 @@ const SignIn = () => {
         </Button>
         <Button
           btn={{
-            colorType: "black" as const,
+            colorType: "black-100" as const,
             onClick: handleSignIn,
           }}
         >
