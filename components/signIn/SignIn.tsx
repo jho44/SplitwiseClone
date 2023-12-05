@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { signIn } from "next-auth/react";
-import Button from "@/components/Button";
+import Button from "@/components/buttons/Button";
 
 const SignIn = () => {
   const handleSignIn = async () => {
