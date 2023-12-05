@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Footer from "@/components/dashboard/Footer";
 import type { TabId } from "@/components/dashboard/types";
-import AddExpense from "@/components/dashboard/AddExpense";
+import AddExpense from "@/components/dashboard/addExpense/AddExpense";
 
 const Dashboard = () => {
   const [currTab, setCurrTab] = useState<TabId>("friends");
@@ -9,7 +9,6 @@ const Dashboard = () => {
 
   return (
     <div className="flex">
-      {/*  */}
       {addingExpense ? (
         <AddExpense />
       ) : (

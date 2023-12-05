@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import OutlineButton from "@/components/buttons/OutlineButton";
+import RecipientsInput from "@/components/dashboard/addExpense/RecipientsInput";
 
 const AddExpense = () => {
   const recipientsInput = useRef<HTMLInputElement>();
@@ -66,17 +67,7 @@ const AddExpense = () => {
             Save
           </label>
         </div>
-        <div className="flex gap-1 font-lato text-base tracking-[-0.08px]">
-          <label className="font-medium">
-            With <span className="font-bold">you</span> and:
-          </label>
-          <input
-            onBlur={preventLosingInputFocus}
-            ref={recipientsInput}
-            className="placeholder:opacity-70 grow"
-            placeholder="Names / emails / phones"
-          />
-        </div>
+        <RecipientsInput inputEl={recipientsInput} />
       </div>
       <div className="flex flex-col gap-6">
         <div className="h-full flex flex-col gap-4 items-center justify-center">
@@ -121,6 +112,7 @@ const AddExpense = () => {
             <input
               onBlur={preventLosingInputFocus}
               type="number"
+              inputMode="decimal"
               className="outline-0 w-[222px] text-[28px] font-semibold h-full border-b-[1px] border-b-black-200 placeholder:text-blue-gray"
               placeholder="0.00"
             />
@@ -174,9 +166,10 @@ const AddExpense = () => {
         </div>
         <Image
           src="/icons/expense/notes.svg"
-          width={28}
-          height={26}
+          width={0}
+          height={0}
           alt="notes associated with this expense"
+          style={{ height: "26px", width: "auto" }}
         />
       </div>
     </div>
