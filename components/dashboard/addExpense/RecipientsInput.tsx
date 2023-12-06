@@ -1,39 +1,23 @@
-import {
-  type MutableRefObject,
-  useState,
-  Dispatch,
-  SetStateAction,
-} from "react";
+import { type MutableRefObject, Dispatch, SetStateAction } from "react";
 import { preventLosingInputFocus } from "@/lib/utils";
 import RecipientTag from "@/components/dashboard/addExpense/RecipientTag";
-
-const EMAIL_PATTERN = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+import type { Recipients } from "@/components/dashboard/types";
 
 const RecipientsInput = ({
   inputEl,
   inputVal,
+  recipients,
+  addRecipient,
   setInputVal,
+  setRecipients,
 }: {
   inputEl: MutableRefObject<HTMLInputElement>;
   inputVal: string;
+  recipients: Recipients[];
+  addRecipient: () => void;
   setInputVal: Dispatch<SetStateAction<string>>;
+  setRecipients: Dispatch<SetStateAction<Recipients[]>>;
 }) => {
-  const [recipients, setRecipients] = useState<{ label: string }[]>([]);
-
-  const addRecipient = () => {
-    const trimmedInputVal = inputVal.trim();
-    if (!trimmedInputVal) return;
-
-    if (!EMAIL_PATTERN.test(trimmedInputVal)) {
-      // TODO: compare to friends list for name
-    }
-    if (recipients.some(({ label }) => label === trimmedInputVal)) return;
-
-    inputEl.current.value = "";
-    setInputVal("");
-    setRecipients((prev) => [...prev, { label: trimmedInputVal }]);
-  };
-
   const rmRecipient = (ind: number) => {
     setRecipients((prev) => {
       if (prev.length === 1) inputEl.current.focus();
@@ -45,9 +29,8 @@ const RecipientsInput = ({
   const handleKeydown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key !== "Enter" && e.key !== "Backspace") return;
 
-    const trimmedInputVal = inputVal.trim();
-    if (e.key === "Backspace" && !trimmedInputVal) {
-      rmRecipient(-1);
+    if (e.key === "Backspace" && !inputVal) {
+      rmRecipient(-1); // TODO: don't immediately delete -- just focus on last tag
       return;
     }
 
