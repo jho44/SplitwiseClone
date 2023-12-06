@@ -1,4 +1,9 @@
-import { type MutableRefObject, useState } from "react";
+import {
+  type MutableRefObject,
+  useState,
+  Dispatch,
+  SetStateAction,
+} from "react";
 import { preventLosingInputFocus } from "@/lib/utils";
 import RecipientTag from "@/components/dashboard/addExpense/RecipientTag";
 
@@ -6,22 +11,27 @@ const EMAIL_PATTERN = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
 const RecipientsInput = ({
   inputEl,
+  inputVal,
+  setInputVal,
 }: {
   inputEl: MutableRefObject<HTMLInputElement>;
+  inputVal: string;
+  setInputVal: Dispatch<SetStateAction<string>>;
 }) => {
   const [recipients, setRecipients] = useState<{ label: string }[]>([]);
 
   const addRecipient = () => {
-    const inputVal = inputEl.current.value.trim();
-    if (!inputVal) return;
+    const trimmedInputVal = inputVal.trim();
+    if (!trimmedInputVal) return;
 
-    if (!EMAIL_PATTERN.test(inputVal)) {
+    if (!EMAIL_PATTERN.test(trimmedInputVal)) {
       // TODO: compare to friends list for name
     }
-    if (recipients.some(({ label }) => label === inputVal)) return;
+    if (recipients.some(({ label }) => label === trimmedInputVal)) return;
 
     inputEl.current.value = "";
-    setRecipients((prev) => [...prev, { label: inputVal }]);
+    setInputVal("");
+    setRecipients((prev) => [...prev, { label: trimmedInputVal }]);
   };
 
   const rmRecipient = (ind: number) => {
@@ -35,8 +45,8 @@ const RecipientsInput = ({
   const handleKeydown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key !== "Enter" && e.key !== "Backspace") return;
 
-    const inputVal = inputEl.current.value.trim();
-    if (e.key === "Backspace" && !inputVal) {
+    const trimmedInputVal = inputVal.trim();
+    if (e.key === "Backspace" && !trimmedInputVal) {
       rmRecipient(-1);
       return;
     }
@@ -46,7 +56,7 @@ const RecipientsInput = ({
   };
 
   return (
-    <div className="flex flex-wrap items-center gap-1 font-lato text-base tracking-[-0.08px]">
+    <div className="flex flex-wrap items-center gap-2 font-lato text-base tracking-[-0.08px]">
       <label className="font-medium">
         With <span className="font-bold">you</span> and:
       </label>
@@ -60,6 +70,9 @@ const RecipientsInput = ({
         />
       ))}
       <input
+        onChange={(e) => {
+          setInputVal(e.target.value);
+        }}
         onBlur={preventLosingInputFocus}
         ref={inputEl}
         className="placeholder:opacity-70 grow"

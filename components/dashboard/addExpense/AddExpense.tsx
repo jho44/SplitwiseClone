@@ -4,11 +4,12 @@ import OutlineButton from "@/components/buttons/OutlineButton";
 import RecipientsInput from "@/components/dashboard/addExpense/RecipientsInput";
 
 const AddExpense = () => {
-  const recipientsInput = useRef<HTMLInputElement>();
+  const recipientsInputEl = useRef<HTMLInputElement>();
   const [height, setHeight] = useState("100vh");
+  const [recipientsInputVal, setRecipientsInputVal] = useState(""); // need state for input val so we can rerender the "Add ___ to Splitwise" bit
 
   useEffect(() => {
-    if (recipientsInput.current) recipientsInput.current.focus();
+    if (recipientsInputEl.current) recipientsInputEl.current.focus();
 
     const handleScroll = (e: Event) => {
       e.preventDefault();
@@ -48,26 +49,46 @@ const AddExpense = () => {
   };
   return (
     <div
-      className="w-full bg-white z-[1] relative flex items-center justify-center"
+      className="w-full bg-white z-[1] relative flex flex-col items-center justify-between"
       style={{ height }}
     >
-      <div className="absolute w-full top-0 p-3 pt-4 border-b-[1px] border-b-gray-100 flex flex-col gap-[26px]">
-        <div className="flex items-center justify-between font-montserrat">
-          <Image
-            src="/icons/close.svg"
-            width={0}
-            height={0}
-            alt="Cancel expense creation"
-            style={{ width: "18px", height: "auto", marginLeft: "9px" }}
+      <div className="w-full">
+        <div className="p-3 pt-4 border-b-[1px] border-b-gray-100 flex flex-col gap-[26px]">
+          <div className="flex items-center justify-between font-montserrat">
+            <Image
+              src="/icons/close.svg"
+              width={0}
+              height={0}
+              alt="Cancel expense creation"
+              style={{ width: "18px", height: "auto", marginLeft: "9px" }}
+            />
+            <label className="text-gray-500 text-base font-medium">
+              Add Expense
+            </label>
+            <label className="text-gray-500 text-sm font-semibold opacity-50">
+              Save
+            </label>
+          </div>
+          <RecipientsInput
+            inputEl={recipientsInputEl}
+            inputVal={recipientsInputVal}
+            setInputVal={setRecipientsInputVal}
           />
-          <label className="text-gray-500 text-base font-medium">
-            Add Expense
-          </label>
-          <label className="text-gray-500 text-sm font-semibold opacity-50">
-            Save
-          </label>
         </div>
-        <RecipientsInput inputEl={recipientsInput} />
+        {recipientsInputVal && (
+          <div className="flex py-5 px-[22px] gap-6">
+            <Image
+              src="/icons/add-user.svg"
+              width={0}
+              height={0}
+              style={{ width: "30px", height: "auto" }}
+              alt="add user"
+            />
+            <label className="font-lato text-[15px] tracking-[0.375px]">
+              Add "{recipientsInputVal}" to SplitwiseClone
+            </label>
+          </div>
+        )}
       </div>
       <div className="flex flex-col gap-6">
         <div className="h-full flex flex-col gap-4 items-center justify-center">
@@ -145,7 +166,7 @@ const AddExpense = () => {
           </OutlineButton>
         </div>
       </div>
-      <div className="absolute bottom-0 w-full h-12 p-3 pl-2 border-t-[1px] border-t-gray-100 flex justify-between">
+      <div className="w-full h-12 p-3 pl-2 border-t-[1px] border-t-gray-100 flex justify-between">
         <div className="flex gap-1.5 items-center">
           <Image
             src="/icons/expense/calendar.svg"
