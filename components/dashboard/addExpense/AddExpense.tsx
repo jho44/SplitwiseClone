@@ -2,11 +2,15 @@ import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import Header from "@/components/dashboard/addExpense/Header";
 import ExpenseDetails from "@/components/dashboard/addExpense/ExpenseDetails";
+import type { Recipient, SplitDetails } from "@/components/dashboard/types";
 
 const AddExpense = () => {
   const recipientsInputEl = useRef<HTMLInputElement>();
   const [height, setHeight] = useState("100vh");
   const [recipientsInputVal, setRecipientsInputVal] = useState(""); // need state for input val so we can rerender the "Add ___ to Splitwise" bit
+  const [recipients, setRecipients] = useState<Recipient[]>([]);
+  const [amtPaid, setAmtPaid] = useState<number>(0);
+  const [splitDetails, setSplitDetails] = useState<SplitDetails>({});
 
   useEffect(() => {
     if (recipientsInputEl.current) recipientsInputEl.current.focus();
@@ -46,11 +50,20 @@ const AddExpense = () => {
       style={{ height }}
     >
       <Header
+        amtPaid={amtPaid}
+        recipients={recipients}
+        splitDetails={splitDetails}
+        setRecipients={setRecipients}
         recipientsInputEl={recipientsInputEl}
         recipientsInputVal={recipientsInputVal}
         setRecipientsInputVal={setRecipientsInputVal}
+        setSplitDetails={setSplitDetails}
       />
-      {recipientsInputVal.length === 0 ? <ExpenseDetails /> : <></>}
+      <ExpenseDetails
+        recipientsInputVal={recipientsInputVal}
+        setAmtPaid={setAmtPaid}
+        setSplitDetails={setSplitDetails}
+      />
       <div className="w-full h-12 p-3 pl-2 border-t-[1px] border-t-gray-100 flex justify-between">
         <div className="flex gap-1.5 items-center">
           <Image

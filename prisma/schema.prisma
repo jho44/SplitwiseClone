@@ -21,7 +21,8 @@ model User {
   blocked         User[]    @relation("blocked")
   blockedBy       User[]    @relation("blocked")
   groups          Group[]
-  createdExpenses Expense[]
+  createdExpenses Expense[] @relation("createdExpenses")
+  partOfExpenses  Expense[] @relation("partOfExpenses")
 
   @@map(name: "users")
 }
@@ -34,18 +35,45 @@ model Group {
   expenses   Expense[]
 }
 
+model InvitedUser {
+  id                String    @id @default(cuid())
+  email             String    @unique
+  createdAt         DateTime  @default(now()) @map(name: "created_at")
+  updatedAt         DateTime  @updatedAt @map(name: "updated_at")
+  invitedToExpenses Expense[] @relation("invitedExpenses")
+
+  @@map(name: "invitedUsers")
+}
+
 model Expense {
-  id          String    @id @default(cuid())
-  borrowerId  String    @map(name: "borrower_id")
-  lenderId    String    @map(name: "lender_id")
-  amtOwed     Json
+  id String @id @default(cuid())
+  // borrowers User[] @relation("borrowerExpenses")
+  // lenders   User[] @relation("lenderExpenses")
+
+  // invitedBorrowers InvitedUser[] @relation("borrowerExpenseInvites")
+  // invitedLenders   InvitedUser[] @relation("lenderExpenseInvites")
+
+  // splitDetails Json
+  // e.g. 
+  // {
+  //   user1Id: amtPaidByUser1,
+  //   user2Id: amtPaidByUser2
+  // }
+  user   User?   @relation("partOfExpenses", fields: [userId], references: [id])
+  userId String? @map(name: "user_id")
+
+  invitedUser   InvitedUser? @relation("invitedExpenses", fields: [invitedUserId], references: [id])
+  invitedUserId String?      @map(name: "invited_user_id")
+
+  amtPaid Decimal
+
   createdAt   DateTime  @default(now()) @map(name: "created_at")
   updatedAt   DateTime  @updatedAt @map(name: "updated_at")
   expenseDate DateTime? @map(name: "expense_date")
   notes       String?
 
-  creator   User   @relation(fields: [creatorId], references: [id])
-  creatorId String @unique
+  creator   User   @relation("createdExpenses", fields: [creatorId], references: [id])
+  creatorId String
 
   description Json
 

@@ -5,3 +5,6 @@ export const preventLosingInputFocus = (
     e.target.focus();
   }
 };
+
+export const toTwoDecimalPts = (amtPaid: number) =>
+  parseFloat((Math.round(amtPaid * 100) / 100).toFixed(2));

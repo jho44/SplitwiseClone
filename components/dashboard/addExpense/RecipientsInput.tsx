@@ -1,7 +1,7 @@
 import { type MutableRefObject, Dispatch, SetStateAction } from "react";
 import { preventLosingInputFocus } from "@/lib/utils";
 import RecipientTag from "@/components/dashboard/addExpense/RecipientTag";
-import type { Recipients } from "@/components/dashboard/types";
+import type { Recipient } from "@/components/dashboard/types";
 
 const RecipientsInput = ({
   inputEl,
@@ -13,10 +13,10 @@ const RecipientsInput = ({
 }: {
   inputEl: MutableRefObject<HTMLInputElement>;
   inputVal: string;
-  recipients: Recipients[];
+  recipients: Recipient[];
   addRecipient: () => void;
   setInputVal: Dispatch<SetStateAction<string>>;
-  setRecipients: Dispatch<SetStateAction<Recipients[]>>;
+  setRecipients: Dispatch<SetStateAction<Recipient[]>>;
 }) => {
   const rmRecipient = (ind: number) => {
     setRecipients((prev) => {
@@ -59,7 +59,7 @@ const RecipientsInput = ({
         onBlur={preventLosingInputFocus}
         ref={inputEl}
         className="placeholder:opacity-70 grow"
-        placeholder="Names / emails / phones"
+        placeholder="Names / emails"
         onKeyDown={handleKeydown}
       />
     </div>

@@ -1,25 +1,35 @@
 import Image from "next/image";
+import { useSession } from "next-auth/react";
 import {
   type MutableRefObject,
-  useState,
   type Dispatch,
   type SetStateAction,
 } from "react";
 import RecipientsInput from "@/components/dashboard/addExpense/RecipientsInput";
-import type { Recipients } from "@/components/dashboard/types";
+import type { Recipient, SplitDetails } from "@/components/dashboard/types";
+import { toTwoDecimalPts } from "@/lib/utils";
 
 const EMAIL_PATTERN = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
 const Header = ({
+  amtPaid,
+  recipients,
   recipientsInputEl,
   recipientsInputVal,
+  spiltDetails,
+  setRecipients,
   setRecipientsInputVal,
 }: {
+  amtPaid: number;
+  recipients: Recipient[];
   recipientsInputEl: MutableRefObject<HTMLInputElement>;
   recipientsInputVal: string;
+  splitDetails: SplitDetails;
+  setRecipients: Dispatch<SetStateAction<Recipient[]>>;
   setRecipientsInputVal: Dispatch<SetStateAction<string>>;
 }) => {
-  const [recipients, setRecipients] = useState<Recipients[]>([]);
+  const { data: session, status } = useSession();
+  const canSave = !!recipients.length && !!amtPaid;
 
   const addRecipient = () => {
     const trimmedInputVal = recipientsInputVal.trim();
@@ -32,7 +42,38 @@ const Header = ({
 
     recipientsInputEl.current.value = "";
     setRecipientsInputVal("");
-    setRecipients((prev) => [...prev, { label: trimmedInputVal }]);
+    setRecipients((prev) => [
+      ...prev,
+      { label: trimmedInputVal, email: trimmedInputVal },
+    ]); // TODO: have this optionally set label to recipient's name
+  };
+
+  const saveExpense = async () => {
+    if (status === "loading") return; // TODO: handle better
+    if (status === "unauthenticated") return; // TODO: redirect to homepage?
+    // email to number (amt they paid)
+    // default split amt (evenly amongst all parties)
+    const splitDetails = {};
+    const numRecipients = recipients.length + 1; // recipients plus yourself
+    const equalSplit = toTwoDecimalPts(amtPaid / numRecipients);
+    recipients.forEach((r) => {
+      splitDetails[r.email] = equalSplit;
+    });
+    splitDetails[session.user.email] = equalSplit;
+    console.log(splitDetails);
+    const res = await fetch("/api/expense", {
+      method: "POST",
+      body: JSON.stringify({
+        splitDetails,
+        // expenseDate, // TODO
+        // notes       // TODO
+        creatorEmail: session.user.email,
+        description: {},
+        groupId: undefined,
+      }),
+    });
+    console.log(res.status)
+    // TODO: error handling on the ui side
   };
 
   return (
@@ -49,9 +90,15 @@ const Header = ({
           <label className="text-gray-500 text-base font-medium">
             Add Expense
           </label>
-          <label className="text-gray-500 text-sm font-semibold opacity-50">
+          <button
+            onClick={saveExpense}
+            className={`text-sm font-semibold ${
+              canSave ? "text-green" : "text-gray-500 opacity-50"
+            }`}
+            disabled={!canSave}
+          >
             Save
-          </label>
+          </button>
         </div>
         <RecipientsInput
           recipients={recipients}
