@@ -52,18 +52,18 @@ const AddExpense = () => {
       <Header
         amtPaid={amtPaid}
         recipients={recipients}
-        splitDetails={splitDetails}
         setRecipients={setRecipients}
         recipientsInputEl={recipientsInputEl}
         recipientsInputVal={recipientsInputVal}
         setRecipientsInputVal={setRecipientsInputVal}
-        setSplitDetails={setSplitDetails}
       />
+      {/* splitDetails={splitDetails} */}
+      {/* setSplitDetails={setSplitDetails} */}
       <ExpenseDetails
         recipientsInputVal={recipientsInputVal}
         setAmtPaid={setAmtPaid}
-        setSplitDetails={setSplitDetails}
       />
+      {/* setSplitDetails={setSplitDetails} */}
       <div className="w-full h-12 p-3 pl-2 border-t-[1px] border-t-gray-100 flex justify-between">
         <div className="flex gap-1.5 items-center">
           <Image

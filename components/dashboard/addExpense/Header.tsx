@@ -16,7 +16,7 @@ const Header = ({
   recipients,
   recipientsInputEl,
   recipientsInputVal,
-  spiltDetails,
+  // spiltDetails,
   setRecipients,
   setRecipientsInputVal,
 }: {
@@ -24,7 +24,7 @@ const Header = ({
   recipients: Recipient[];
   recipientsInputEl: MutableRefObject<HTMLInputElement>;
   recipientsInputVal: string;
-  splitDetails: SplitDetails;
+  // splitDetails: SplitDetails;
   setRecipients: Dispatch<SetStateAction<Recipient[]>>;
   setRecipientsInputVal: Dispatch<SetStateAction<string>>;
 }) => {
