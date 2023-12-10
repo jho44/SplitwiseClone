@@ -11,18 +11,18 @@ datasource db {
 }
 
 model User {
-  id              String    @id @default(cuid())
+  id              String          @id @default(cuid())
   name            String
-  email           String    @unique
-  createdAt       DateTime  @default(now()) @map(name: "created_at")
-  updatedAt       DateTime  @updatedAt @map(name: "updated_at")
-  friends         User[]    @relation("friends")
-  friendOf        User[]    @relation("friends")
-  blocked         User[]    @relation("blocked")
-  blockedBy       User[]    @relation("blocked")
+  email           String          @unique
+  createdAt       DateTime        @default(now()) @map(name: "created_at")
+  updatedAt       DateTime        @updatedAt @map(name: "updated_at")
+  friends         User[]          @relation("friends")
+  friendOf        User[]          @relation("friends")
+  blocked         User[]          @relation("blocked")
+  blockedBy       User[]          @relation("blocked")
   groups          Group[]
-  createdExpenses Expense[] @relation("createdExpenses")
-  partOfExpenses  Expense[] @relation("partOfExpenses")
+  createdExpenses Expense[]       @relation("createdExpenses")
+  partOfExpenses  ExpenseDetail[] @relation("partOfExpenses")
 
   @@map(name: "users")
 }
@@ -36,29 +36,18 @@ model Group {
 }
 
 model InvitedUser {
-  id                String    @id @default(cuid())
-  email             String    @unique
-  createdAt         DateTime  @default(now()) @map(name: "created_at")
-  updatedAt         DateTime  @updatedAt @map(name: "updated_at")
-  invitedToExpenses Expense[] @relation("invitedExpenses")
+  id                String          @id @default(cuid())
+  email             String          @unique
+  createdAt         DateTime        @default(now()) @map(name: "created_at")
+  updatedAt         DateTime        @updatedAt @map(name: "updated_at")
+  invitedToExpenses ExpenseDetail[] @relation("invitedExpenses")
 
   @@map(name: "invitedUsers")
 }
 
-model Expense {
-  id String @id @default(cuid())
-  // borrowers User[] @relation("borrowerExpenses")
-  // lenders   User[] @relation("lenderExpenses")
-
-  // invitedBorrowers InvitedUser[] @relation("borrowerExpenseInvites")
-  // invitedLenders   InvitedUser[] @relation("lenderExpenseInvites")
-
-  // splitDetails Json
-  // e.g. 
-  // {
-  //   user1Id: amtPaidByUser1,
-  //   user2Id: amtPaidByUser2
-  // }
+// amt owed and paid by each member involved in some expense
+model ExpenseDetail {
+  id     String  @id @default(cuid())
   user   User?   @relation("partOfExpenses", fields: [userId], references: [id])
   userId String? @map(name: "user_id")
 
@@ -68,6 +57,14 @@ model Expense {
   amtPaid Decimal
   amtOwed Decimal
 
+  parentExpense Expense @relation("expenseDetails", fields: [parentExpenseId], references: [id])
+  parentExpenseId String    @map(name: "parent_expense_id")
+}
+
+model Expense {
+  id             String          @id @default(cuid())
+  expenseDetails ExpenseDetail[] @relation("expenseDetails")
+
   createdAt   DateTime  @default(now()) @map(name: "created_at")
   updatedAt   DateTime  @updatedAt @map(name: "updated_at")
   expenseDate DateTime? @map(name: "expense_date")
@@ -76,7 +73,7 @@ model Expense {
   creator   User   @relation("createdExpenses", fields: [creatorId], references: [id])
   creatorId String
 
-  description Json
+  description String
 
   group   Group?  @relation(fields: [groupId], references: [id])
   groupId String? @map(name: "group_id")

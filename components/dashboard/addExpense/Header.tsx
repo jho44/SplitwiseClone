@@ -13,6 +13,7 @@ const EMAIL_PATTERN = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
 const Header = ({
   amtPaid,
+  paidDetails,
   recipients,
   recipientsInputEl,
   recipientsInputVal,
@@ -21,6 +22,7 @@ const Header = ({
   setRecipientsInputVal,
 }: {
   amtPaid: number;
+  paidDetails: PaidDetails;
   recipients: Recipient[];
   recipientsInputEl: MutableRefObject<HTMLInputElement>;
   recipientsInputVal: string;
@@ -60,15 +62,17 @@ const Header = ({
       splitDetails[r.email] = equalSplit;
     });
     splitDetails[session.user.email] = equalSplit;
-    console.log(splitDetails);
+
     await fetch("/api/expense", {
       method: "POST",
       body: JSON.stringify({
         splitDetails,
+        paidDetails,
+        recipients: recipients.map(({ email }) => email),
         // expenseDate, // TODO
         // notes       // TODO
         creatorEmail: session.user.email,
-        description: {},
+        description: "Some description",
         groupId: undefined,
       }),
     });

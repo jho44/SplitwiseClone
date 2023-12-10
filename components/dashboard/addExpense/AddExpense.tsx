@@ -58,6 +58,7 @@ const AddExpense = () => {
     >
       <Header
         amtPaid={amtPaid}
+        paidDetails={paidDetails}
         recipients={recipients}
         setPaidDetails={setPaidDetails}
         setRecipients={setRecipients}
