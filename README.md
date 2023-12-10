@@ -5,3 +5,8 @@ This is the starter project for the fullstack tutorial with Next.js and Prisma. 
 Because Prisma Client is tailored to your own schema, you need to update it every time your Prisma schema file is changing by running the following command:
 
 `npx prisma generate`
+
+## Implementation Notes
+
+- maybe it's time to use useContext...
+  - for passing setPaidDetails down to `RecipientsInput.tsx` -- not needed in `addExpense/Header.tsx`

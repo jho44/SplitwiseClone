@@ -6,7 +6,7 @@ import {
   type SetStateAction,
 } from "react";
 import RecipientsInput from "@/components/dashboard/addExpense/RecipientsInput";
-import type { Recipient, SplitDetails } from "@/components/dashboard/types";
+import type { PaidDetails, Recipient } from "@/components/dashboard/types";
 import { toTwoDecimalPts } from "@/lib/utils";
 
 const EMAIL_PATTERN = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -16,7 +16,7 @@ const Header = ({
   recipients,
   recipientsInputEl,
   recipientsInputVal,
-  // spiltDetails,
+  setPaidDetails,
   setRecipients,
   setRecipientsInputVal,
 }: {
@@ -24,7 +24,7 @@ const Header = ({
   recipients: Recipient[];
   recipientsInputEl: MutableRefObject<HTMLInputElement>;
   recipientsInputVal: string;
-  // splitDetails: SplitDetails;
+  setPaidDetails: Dispatch<SetStateAction<PaidDetails>>;
   setRecipients: Dispatch<SetStateAction<Recipient[]>>;
   setRecipientsInputVal: Dispatch<SetStateAction<string>>;
 }) => {
@@ -61,7 +61,7 @@ const Header = ({
     });
     splitDetails[session.user.email] = equalSplit;
     console.log(splitDetails);
-    const res = await fetch("/api/expense", {
+    await fetch("/api/expense", {
       method: "POST",
       body: JSON.stringify({
         splitDetails,
@@ -72,7 +72,6 @@ const Header = ({
         groupId: undefined,
       }),
     });
-    console.log(res.status)
     // TODO: error handling on the ui side
   };
 
@@ -101,11 +100,13 @@ const Header = ({
           </button>
         </div>
         <RecipientsInput
+          amtPaid={amtPaid}
           recipients={recipients}
           setRecipients={setRecipients}
           inputEl={recipientsInputEl}
           inputVal={recipientsInputVal}
           setInputVal={setRecipientsInputVal}
+          setPaidDetails={setPaidDetails}
           addRecipient={addRecipient}
         />
       </div>

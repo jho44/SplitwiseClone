@@ -66,6 +66,7 @@ model Expense {
   invitedUserId String?      @map(name: "invited_user_id")
 
   amtPaid Decimal
+  amtOwed Decimal
 
   createdAt   DateTime  @default(now()) @map(name: "created_at")
   updatedAt   DateTime  @updatedAt @map(name: "updated_at")

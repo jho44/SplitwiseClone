@@ -1,9 +1,9 @@
-import type { NextApiRequest, NextApiResponse } from 'next'
+import type { NextApiRequest, NextApiResponse } from "next";
 import prisma from "@/lib/prisma";
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<string>
+  res: NextApiResponse<string>,
 ) {
   if (req.method === "POST") {
     const { creatorEmail, splitDetails } = JSON.parse(req.body);
@@ -69,7 +69,7 @@ export default async function handler(
         });
       },
     );
-    res.status(200).send('ok');
+    res.status(200).send("ok");
     return;
   }
 

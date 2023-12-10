@@ -2,14 +2,25 @@ import Image from "next/image";
 import OutlineButton from "@/components/buttons/OutlineButton";
 import type { Dispatch, SetStateAction } from "react";
 import { toTwoDecimalPts } from "@/lib/utils";
+import type { PaidDetails } from "@/components/dashboard/types";
+import { useSession } from "next-auth/react";
 
 const ExpenseDetails = ({
   recipientsInputVal,
+  amtPaid,
+  paidDetails,
   setAmtPaid,
+  setPaidDetails,
+  setPayersListOpen,
 }: {
   recipientsInputVal: string;
+  amtPaid: number;
+  paidDetails: PaidDetails;
   setAmtPaid: Dispatch<SetStateAction<number>>;
+  setPaidDetails: Dispatch<SetStateAction<PaidDetails>>;
+  setPayersListOpen: Dispatch<SetStateAction<boolean>>;
 }) => {
+  const { data } = useSession();
   const preventLosingInputFocus = (
     e: React.FocusEvent<HTMLInputElement, Element>,
   ) => {
@@ -17,6 +28,15 @@ const ExpenseDetails = ({
       e.target.focus();
     }
   };
+
+  let payersLabel: string;
+  const payers = Object.keys(paidDetails);
+  const numPayers = payers.length;
+  if (!numPayers) payersLabel = "you";
+  else if (numPayers === 1) {
+    if (payers[0] === data.user.email) payersLabel = "you";
+    else payersLabel = payers[0].split("@")[0];
+  } else payersLabel = `${numPayers} people`;
 
   return (
     <div
@@ -73,6 +93,17 @@ const ExpenseDetails = ({
               }
               const formattedAmt = toTwoDecimalPts(amtPaidFloat);
               setAmtPaid(formattedAmt);
+              setPaidDetails((paidDetails) => {
+                const payers = Object.keys(paidDetails);
+                const numPayers = payers.length;
+                const res = {};
+                if (!numPayers) res[data.user.email] = formattedAmt;
+                else if (numPayers === 1) res[payers[0]] = formattedAmt;
+                else {
+                  /* TODO: multiple payers */
+                }
+                return res;
+              });
             }}
             type="number"
             inputMode="decimal"
@@ -89,10 +120,18 @@ const ExpenseDetails = ({
               padding: "6px 9px",
               margin: "0 8px",
             },
-            onClick: () => {},
+            onClick: () => {
+              if (!amtPaid) {
+                window.alert(
+                  "Remember to enter a cost for your expense first!",
+                );
+                return;
+              }
+              setPayersListOpen(true);
+            },
           }}
         >
-          you
+          {payersLabel}
         </OutlineButton>
         and split
         <OutlineButton

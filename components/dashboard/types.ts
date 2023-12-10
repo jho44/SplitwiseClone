@@ -5,6 +5,6 @@ export type Recipient = {
   email: string;
 };
 
-export type SplitDetails = {
+export type PaidDetails = {
   [key: string]: number;
 };
