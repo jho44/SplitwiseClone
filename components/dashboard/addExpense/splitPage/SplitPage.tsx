@@ -3,8 +3,12 @@ import type { OwedDetails, Recipient } from "@/components/dashboard/types";
 import { useSession } from "next-auth/react";
 import Header from "@/components/dashboard/Header";
 import MemberRow from "@/components/dashboard/addExpense/MemberRow";
-import Select from "./splitDetails/Select";
-import EqualBottom from "./splitDetails/EqualBottom";
+import Select from "../splitDetails/Select";
+import EqualBottom from "../splitDetails/EqualBottom";
+import {
+  handleSplitTypeClick,
+  toggleEqualSplitOnPerson,
+} from "./splitPageLogic";
 
 const SplitPage = ({
   amtPaid,
@@ -26,37 +30,6 @@ const SplitPage = ({
 
   const { data: session } = useSession();
 
-  const handleSplitTypeClick = (type: "equal" | "exact" | "percent") => {
-    const amts = {};
-    const numRecipients = recipients.length;
-    recipients.forEach((r) => {
-      amts[r.email] = type === "equal" ? amtPaid / numRecipients : 0;
-    });
-    setOwedDetails({
-      type,
-      amts,
-    });
-  };
-
-  const toggleEqualSplitOnPerson = (person: string) => {
-    setOwedDetails((prevOwed) => {
-      if (person in prevOwed.amts) delete prevOwed.amts[person];
-      else prevOwed.amts[person] = 0;
-      const payers = Object.keys(prevOwed.amts);
-      console.log(payers);
-      const numPayers = payers.length;
-
-      const amts = {};
-      const splitAmt = numPayers ? amtPaid / numPayers : 0;
-      payers.forEach((payer) => {
-        amts[payer] = splitAmt;
-      });
-      return {
-        ...prevOwed,
-        amts,
-      };
-    });
-  };
   return (
     <div className="fixed bg-white w-full h-full">
       <Header
@@ -92,21 +65,39 @@ const SplitPage = ({
         <button
           className="border-[1px] border-gray-100 flex-1	w-0 text-[37px] h-8"
           style={owedDetails.type === "equal" ? selectedBtnStyle : {}}
-          onClick={() => handleSplitTypeClick("equal")}
+          onClick={() =>
+            handleSplitTypeClick("equal", {
+              amtPaid,
+              recipients,
+              setOwedDetails,
+            })
+          }
         >
           =
         </button>
         <button
           className="border-[1px] border-gray-100 flex-1	w-0 text-[17px] h-8"
           style={owedDetails.type === "exact" ? selectedBtnStyle : {}}
-          onClick={() => handleSplitTypeClick("exact")}
+          onClick={() =>
+            handleSplitTypeClick("exact", {
+              amtPaid,
+              recipients,
+              setOwedDetails,
+            })
+          }
         >
           1.23
         </button>
         <button
           className="border-[1px] border-gray-100 flex-1	w-0 text-[17px] h-8"
           style={owedDetails.type === "percent" ? selectedBtnStyle : {}}
-          onClick={() => handleSplitTypeClick("percent")}
+          onClick={() =>
+            handleSplitTypeClick("percent", {
+              amtPaid,
+              recipients,
+              setOwedDetails,
+            })
+          }
         >
           %
         </button>
@@ -138,7 +129,12 @@ const SplitPage = ({
               <div>right</div>
             )
           }
-          onClick={() => toggleEqualSplitOnPerson(r.email)}
+          onClick={() =>
+            toggleEqualSplitOnPerson(r.email, {
+              amtPaid,
+              setOwedDetails,
+            })
+          }
         />
       ))}
       {owedDetails.type === "equal" ? (

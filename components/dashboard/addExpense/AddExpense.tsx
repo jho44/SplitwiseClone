@@ -1,14 +1,14 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import Header from "@/components/dashboard/addExpense/Header";
-import ExpenseDetails from "@/components/dashboard/addExpense/ExpenseDetails";
+import Header from "@/components/dashboard/addExpense/header/Header";
+import ExpenseDetails from "@/components/dashboard/addExpense/expenseDetails/ExpenseDetails";
 import type {
   Recipient,
   PaidDetails,
   OwedDetails,
 } from "@/components/dashboard/types";
 import PayersList from "@/components/dashboard/addExpense/PayersList";
-import SplitPage from "@/components/dashboard/addExpense/SplitPage";
+import SplitPage from "@/components/dashboard/addExpense/splitPage/SplitPage";
 
 const AddExpense = () => {
   const recipientsInputEl = useRef<HTMLInputElement>();

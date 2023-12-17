@@ -1,9 +1,9 @@
 import Image from "next/image";
 import OutlineButton from "@/components/buttons/OutlineButton";
 import type { ChangeEvent, Dispatch, SetStateAction } from "react";
-import { toTwoDecimalPts } from "@/lib/utils";
 import type { OwedDetails, PaidDetails } from "@/components/dashboard/types";
 import { useSession } from "next-auth/react";
+import { handleAmtPaidChange } from "./expenseDetailsLogic";
 
 const ExpenseDetails = ({
   recipientsInputVal,
@@ -36,48 +36,12 @@ const ExpenseDetails = ({
   } else payersLabel = `${numPayers} people`;
 
   const onAmtPaidChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const amtPaidFloat = parseFloat(e.target.value);
-    if (!amtPaidFloat) {
-      setAmtPaid(0);
-      return;
-    }
-    const formattedAmt = toTwoDecimalPts(amtPaidFloat);
-    setAmtPaid(formattedAmt);
-    setPaidDetails((paidDetails) => {
-      const payers = Object.keys(paidDetails);
-      const numPayers = payers.length;
-      const res = {};
-      if (!numPayers) res[session.user.email] = formattedAmt;
-      else if (numPayers === 1) res[payers[0]] = formattedAmt;
-      else {
-        /* TODO: multiple payers */
-      }
-      return res;
-    });
-    setOwedDetails((owedDetails) => {
-      const amts = owedDetails.amts;
-      const payers = Object.keys(amts);
-      if (!(session.user.email in amts)) {
-        payers.push(session.user.email);
-      }
-
-      // if split equally amongst everyone
-      if (
-        owedDetails.type === "equal" &&
-        !Object.values(amts).some((amt) => amt == 0)
-      ) {
-        const splitAmt = formattedAmt / payers.length;
-        payers.forEach((payer) => {
-          amts[payer] = splitAmt;
-        });
-
-        return {
-          ...owedDetails,
-          amts,
-        };
-      }
-      // TODO: handle when not split equally
-      return owedDetails;
+    handleAmtPaidChange({
+      amtPaidFloat: parseFloat(e.target.value),
+      setAmtPaid,
+      setPaidDetails,
+      setOwedDetails,
+      session,
     });
   };
 
