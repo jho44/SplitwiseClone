@@ -16,7 +16,7 @@ const FooterTab: React.FC<{
   return (
     <div className="w-1/5 relative pt-1.5" onClick={onClick}>
       {active && (
-        <div className="absolute -top-[1.5px] w-12 h-[3px] bg-green left-1/2 -translate-x-1/2" />
+        <div className="absolute -top-[1.5px] w-12 h-[3px] bg-green-200 left-1/2 -translate-x-1/2" />
       )}
       <div className="h-[51px] flex flex-col items-center justify-center gap-1.5">
         <Image
@@ -28,7 +28,7 @@ const FooterTab: React.FC<{
         />
         <label
           className={`text-xs font-lato ${
-            active ? "text-green" : "text-gray-400"
+            active ? "text-green-200" : "text-gray-400"
           }`}
         >
           {label}

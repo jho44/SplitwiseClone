@@ -2,7 +2,7 @@ import Image from "next/image";
 import OutlineButton from "@/components/buttons/OutlineButton";
 import type { Dispatch, SetStateAction } from "react";
 import { toTwoDecimalPts } from "@/lib/utils";
-import type { PaidDetails } from "@/components/dashboard/types";
+import type { OwedDetails, PaidDetails } from "@/components/dashboard/types";
 import { useSession } from "next-auth/react";
 
 const ExpenseDetails = ({
@@ -10,19 +10,23 @@ const ExpenseDetails = ({
   amtPaid,
   paidDetails,
   setAmtPaid,
+  setOwedDetails,
   setPaidDetails,
   setPayersListOpen,
+  setSplitPageOpen,
 }: {
   recipientsInputVal: string;
   amtPaid: number;
   paidDetails: PaidDetails;
   setAmtPaid: Dispatch<SetStateAction<number>>;
+  setOwedDetails: Dispatch<SetStateAction<OwedDetails>>;
   setPaidDetails: Dispatch<SetStateAction<PaidDetails>>;
   setPayersListOpen: Dispatch<SetStateAction<boolean>>;
+  setSplitPageOpen: Dispatch<SetStateAction<boolean>>;
 }) => {
-  const { data } = useSession();
+  const { data: session } = useSession();
   const preventLosingInputFocus = (
-    e: React.FocusEvent<HTMLInputElement, Element>,
+    e: React.FocusEvent<HTMLInputElement, Element>
   ) => {
     if (!e.relatedTarget) {
       e.target.focus();
@@ -34,7 +38,7 @@ const ExpenseDetails = ({
   const numPayers = payers.length;
   if (!numPayers) payersLabel = "you";
   else if (numPayers === 1) {
-    if (payers[0] === data.user.email) payersLabel = "you";
+    if (payers[0] === session.user.email) payersLabel = "you";
     else payersLabel = payers[0].split("@")[0];
   } else payersLabel = `${numPayers} people`;
 
@@ -97,12 +101,37 @@ const ExpenseDetails = ({
                 const payers = Object.keys(paidDetails);
                 const numPayers = payers.length;
                 const res = {};
-                if (!numPayers) res[data.user.email] = formattedAmt;
+                if (!numPayers) res[session.user.email] = formattedAmt;
                 else if (numPayers === 1) res[payers[0]] = formattedAmt;
                 else {
                   /* TODO: multiple payers */
                 }
                 return res;
+              });
+              setOwedDetails((owedDetails) => {
+                const amts = owedDetails.amts;
+                const payers = Object.keys(amts);
+                if (!(session.user.email in amts)) {
+                  payers.push(session.user.email);
+                }
+
+                // if split equally amongst everyone
+                if (
+                  owedDetails.type === "equal" &&
+                  !Object.values(amts).some((amt) => amt == 0)
+                ) {
+                  const splitAmt = formattedAmt / payers.length;
+                  payers.forEach((payer) => {
+                    amts[payer] = splitAmt;
+                  });
+
+                  return {
+                    ...owedDetails,
+                    amts,
+                  };
+                }
+                // TODO: handle when not split equally
+                return owedDetails;
               });
             }}
             type="number"
@@ -123,7 +152,7 @@ const ExpenseDetails = ({
             onClick: () => {
               if (!amtPaid) {
                 window.alert(
-                  "Remember to enter a cost for your expense first!",
+                  "Remember to enter a cost for your expense first!"
                 );
                 return;
               }
@@ -140,7 +169,15 @@ const ExpenseDetails = ({
               padding: "6px 9px",
               margin: "0 8px",
             },
-            onClick: () => {},
+            onClick: () => {
+              if (!amtPaid) {
+                window.alert(
+                  "Remember to enter a cost for your expense first!"
+                );
+                return;
+              }
+              setSplitPageOpen(true);
+            },
           }}
         >
           equally

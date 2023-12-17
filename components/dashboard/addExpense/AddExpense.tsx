@@ -5,9 +5,10 @@ import ExpenseDetails from "@/components/dashboard/addExpense/ExpenseDetails";
 import type {
   Recipient,
   PaidDetails,
-  // OwedDetails,
+  OwedDetails,
 } from "@/components/dashboard/types";
 import PayersList from "@/components/dashboard/addExpense/PayersList";
+import SplitPage from "@/components/dashboard/addExpense/SplitPage";
 
 const AddExpense = () => {
   const recipientsInputEl = useRef<HTMLInputElement>();
@@ -16,8 +17,12 @@ const AddExpense = () => {
   const [recipients, setRecipients] = useState<Recipient[]>([]);
   const [amtPaid, setAmtPaid] = useState<number>(0);
   const [paidDetails, setPaidDetails] = useState<PaidDetails>({});
-  // const [owedDetails, setOwedDetails] = useState<OwedDetails>({});
+  const [owedDetails, setOwedDetails] = useState<OwedDetails>({
+    type: "equal",
+    amts: {},
+  });
   const [payersListOpen, setPayersListOpen] = useState(false);
+  const [splitPageOpen, setSplitPageOpen] = useState(false);
 
   useEffect(() => {
     if (recipientsInputEl.current) recipientsInputEl.current.focus();
@@ -60,6 +65,7 @@ const AddExpense = () => {
         amtPaid={amtPaid}
         paidDetails={paidDetails}
         recipients={recipients}
+        setOwedDetails={setOwedDetails}
         setPaidDetails={setPaidDetails}
         setRecipients={setRecipients}
         recipientsInputEl={recipientsInputEl}
@@ -71,8 +77,10 @@ const AddExpense = () => {
         paidDetails={paidDetails}
         recipientsInputVal={recipientsInputVal}
         setAmtPaid={setAmtPaid}
+        setOwedDetails={setOwedDetails}
         setPaidDetails={setPaidDetails}
         setPayersListOpen={setPayersListOpen}
+        setSplitPageOpen={setSplitPageOpen}
       />
       <div className="w-full h-12 p-3 pl-2 border-t-[1px] border-t-gray-100 flex justify-between">
         <div className="flex gap-1.5 items-center">
@@ -108,6 +116,15 @@ const AddExpense = () => {
           recipients={recipients}
           setPaidDetails={setPaidDetails}
           setPayersListOpen={setPayersListOpen}
+        />
+      )}
+      {splitPageOpen && (
+        <SplitPage
+          amtPaid={amtPaid}
+          owedDetails={owedDetails}
+          recipients={recipients}
+          setOwedDetails={setOwedDetails}
+          setSplitPageOpen={setSplitPageOpen}
         />
       )}
     </div>

@@ -36,7 +36,7 @@ const PayersList = ({
       <Header
         left={
           <button
-            className="text-[13px] font-semibold text-green text-left"
+            className="text-[13px] font-semibold text-green-200 text-left"
             onClick={() => setPayersListOpen(false)}
           >
             Cancel
@@ -87,7 +87,7 @@ const PayersList = ({
             src="/icons/user.svg"
             height={0}
             width={0}
-            alt="other payer"
+            alt={`other payer ${r.label}`}
             style={{ width: "44px", height: "auto" }}
           />
           <label

@@ -6,7 +6,11 @@ import {
   type SetStateAction,
 } from "react";
 import RecipientsInput from "@/components/dashboard/addExpense/RecipientsInput";
-import type { PaidDetails, Recipient } from "@/components/dashboard/types";
+import type {
+  OwedDetails,
+  PaidDetails,
+  Recipient,
+} from "@/components/dashboard/types";
 import { toTwoDecimalPts } from "@/lib/utils";
 
 const EMAIL_PATTERN = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
@@ -17,6 +21,7 @@ const Header = ({
   recipients,
   recipientsInputEl,
   recipientsInputVal,
+  setOwedDetails,
   setPaidDetails,
   setRecipients,
   setRecipientsInputVal,
@@ -26,6 +31,7 @@ const Header = ({
   recipients: Recipient[];
   recipientsInputEl: MutableRefObject<HTMLInputElement>;
   recipientsInputVal: string;
+  setOwedDetails: Dispatch<SetStateAction<OwedDetails>>;
   setPaidDetails: Dispatch<SetStateAction<PaidDetails>>;
   setRecipients: Dispatch<SetStateAction<Recipient[]>>;
   setRecipientsInputVal: Dispatch<SetStateAction<string>>;
@@ -48,6 +54,17 @@ const Header = ({
       ...prev,
       { label: trimmedInputVal, email: trimmedInputVal },
     ]); // TODO: have this optionally set label to recipient's name
+
+    setOwedDetails((prev) => {
+      // TODO: handle when not splitting equally
+      return {
+        ...prev,
+        amts: {
+          ...prev.amts,
+          [trimmedInputVal]: null,
+        },
+      };
+    });
   };
 
   const saveExpense = async () => {
@@ -96,7 +113,7 @@ const Header = ({
           <button
             onClick={saveExpense}
             className={`text-sm font-semibold ${
-              canSave ? "text-green" : "text-gray-500 opacity-50"
+              canSave ? "text-green-200" : "text-gray-500 opacity-50"
             }`}
             disabled={!canSave}
           >

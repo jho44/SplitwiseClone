@@ -22,8 +22,12 @@ const config: Config = {
           400: "var(--gray-400)",
           500: "var(--gray-500)",
         },
-        green: "var(--green)",
+        green: {
+          100: "var(--green-100)",
+          200: "var(--green-200)",
+        },
         "blue-gray": "var(--blue-gray)",
+        red: "var(--red)",
       },
       fontFamily: {
         lato: ["var(--font-lato)"],
