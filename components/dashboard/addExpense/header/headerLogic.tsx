@@ -4,12 +4,14 @@ import type {
   PaidDetails,
   Recipient,
 } from "@/components/dashboard/types";
+import { splitEqually } from "@/components/dashboard/addExpense/splitDetails/splitPageLogic";
 import { toTwoDecimalPts } from "@/lib/utils";
 import { Session } from "next-auth";
 
 const EMAIL_PATTERN = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 
 export const addRecipient = ({
+  amtPaid,
   recipients,
   recipientsInputEl,
   recipientsInputVal,
@@ -17,6 +19,7 @@ export const addRecipient = ({
   setRecipients,
   setRecipientsInputVal,
 }: {
+  amtPaid: number;
   recipients: Recipient[];
   recipientsInputEl: MutableRefObject<HTMLInputElement>;
   recipientsInputVal: string;
@@ -39,15 +42,25 @@ export const addRecipient = ({
     { label: trimmedInputVal, email: trimmedInputVal },
   ]); // TODO: have this optionally set label to recipient's name
 
-  setOwedDetails((prev) => {
+  setOwedDetails((owedDetails) => {
+    if (owedDetails.type === "equal") {
+      if (!amtPaid) {
+        return {
+          ...owedDetails,
+          amts: {
+            ...owedDetails.amts,
+            [trimmedInputVal]: null,
+          },
+        };
+      }
+      owedDetails.amts[trimmedInputVal] = null;
+      return splitEqually(true, {
+        amtPaid,
+        owedDetails,
+      });
+    }
     // TODO: handle when not splitting equally
-    return {
-      ...prev,
-      amts: {
-        ...prev.amts,
-        [trimmedInputVal]: null,
-      },
-    };
+    return owedDetails;
   });
 };
 

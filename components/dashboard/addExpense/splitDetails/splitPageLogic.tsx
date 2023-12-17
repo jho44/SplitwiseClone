@@ -1,5 +1,5 @@
+import type { OwedDetails, Recipient } from "@/components/dashboard/types";
 import { Dispatch, SetStateAction } from "react";
-import { OwedDetails, Recipient } from "../../types";
 
 export const handleSplitTypeClick = (
   type: "equal" | "exact" | "percent",
@@ -50,4 +50,26 @@ export const toggleEqualSplitOnPerson = (
       amts,
     };
   });
+};
+
+export const splitEqually = (
+  equally: boolean,
+  {
+    amtPaid,
+    owedDetails,
+  }: {
+    amtPaid: number;
+    owedDetails: OwedDetails;
+  }
+): OwedDetails => {
+  const amts = {};
+  const payers = Object.keys(owedDetails.amts);
+  const splitAmt = equally ? amtPaid / payers.length : 0;
+  payers.forEach((p) => {
+    amts[p] = splitAmt;
+  });
+  return {
+    type: "equal",
+    amts,
+  };
 };

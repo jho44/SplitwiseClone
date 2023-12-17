@@ -1,14 +1,14 @@
-import type { Dispatch, SetStateAction } from "react";
-import type { OwedDetails, Recipient } from "@/components/dashboard/types";
-import { useSession } from "next-auth/react";
 import Header from "@/components/dashboard/Header";
 import MemberRow from "@/components/dashboard/addExpense/MemberRow";
-import Select from "../splitDetails/Select";
-import EqualBottom from "../splitDetails/EqualBottom";
+import EqualBottom from "@/components/dashboard/addExpense/splitDetails/EqualBottom";
+import Select from "@/components/dashboard/addExpense/splitDetails/Select";
 import {
   handleSplitTypeClick,
   toggleEqualSplitOnPerson,
-} from "./splitPageLogic";
+} from "@/components/dashboard/addExpense/splitDetails/splitPageLogic";
+import type { OwedDetails, Recipient } from "@/components/dashboard/types";
+import { useSession } from "next-auth/react";
+import type { Dispatch, SetStateAction } from "react";
 
 const SplitPage = ({
   amtPaid,

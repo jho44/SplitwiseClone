@@ -8,7 +8,7 @@ import type {
   OwedDetails,
 } from "@/components/dashboard/types";
 import PayersList from "@/components/dashboard/addExpense/PayersList";
-import SplitPage from "@/components/dashboard/addExpense/splitPage/SplitPage";
+import SplitPage from "@/components/dashboard/addExpense/splitDetails/SplitPage";
 
 const AddExpense = () => {
   const recipientsInputEl = useRef<HTMLInputElement>();

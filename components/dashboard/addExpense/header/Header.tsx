@@ -81,6 +81,7 @@ const Header = ({
           setPaidDetails={setPaidDetails}
           addRecipient={() =>
             addRecipient({
+              amtPaid,
               recipients,
               recipientsInputEl,
               recipientsInputVal,
@@ -96,6 +97,7 @@ const Header = ({
           className="flex py-5 px-[22px] gap-6"
           onClick={() =>
             addRecipient({
+              amtPaid,
               recipients,
               recipientsInputEl,
               recipientsInputVal,

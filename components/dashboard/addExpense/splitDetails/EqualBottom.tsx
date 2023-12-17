@@ -1,7 +1,8 @@
 import Select from "@/components/dashboard/addExpense/splitDetails/Select";
 import { toTwoDecimalPts } from "@/lib/utils";
-import { OwedDetails } from "../../types";
+import { OwedDetails } from "@/components/dashboard/types";
 import type { Dispatch, SetStateAction } from "react";
+import { splitEqually } from "@/components/dashboard/addExpense/splitDetails/splitPageLogic";
 
 const EqualBottom = ({
   amtPaid,
@@ -32,21 +33,6 @@ const EqualBottom = ({
   const isSplitEqually =
     amtNumbers.length > 0 && !amtNumbers.some((amt) => amt == 0);
 
-  const split = () => {
-    setOwedDetails((owedDetails) => {
-      const amts = {};
-      const payers = Object.keys(owedDetails.amts);
-      const splitAmt = isSplitEqually ? 0 : amtPaid / payers.length;
-      payers.forEach((p) => {
-        amts[p] = splitAmt;
-      });
-      return {
-        type: "equal",
-        amts,
-      };
-    });
-  };
-
   return (
     <div
       className="absolute bottom-0 grid w-full py-4 font-lato"
@@ -58,7 +44,14 @@ const EqualBottom = ({
       {msg}
       <div
         className="font-bold text-base flex gap-4 px-4 py-[11px] border-l-[1px] border-l-gray-100"
-        onClick={() => split()}
+        onClick={() =>
+          setOwedDetails((prev) => {
+            return splitEqually(!isSplitEqually, {
+              amtPaid,
+              owedDetails: prev,
+            });
+          })
+        }
       >
         All
         <Select alt="Everyone owes an equal amount" chosen={isSplitEqually} />
