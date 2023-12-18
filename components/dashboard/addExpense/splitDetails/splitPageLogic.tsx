@@ -35,19 +35,20 @@ export const toggleEqualSplitOnPerson = (
   }
 ) => {
   setOwedDetails((prevOwed) => {
-    if (person in prevOwed.amts) delete prevOwed.amts[person];
-    else prevOwed.amts[person] = 0;
-    const payers = Object.keys(prevOwed.amts);
-    const numPayers = payers.length;
-
-    const amts = {};
-    const splitAmt = numPayers ? amtPaid / numPayers : 0;
+    if (prevOwed.amts[person]) {
+      // this person should no longer be a payer
+      prevOwed.amts[person] = 0;
+    } else prevOwed.amts[person] = 1;
+    const payers = Object.keys(prevOwed.amts).filter(
+      (payer) => prevOwed.amts[payer] > 0
+    );
+    const splitAmt = amtPaid / payers.length;
     payers.forEach((payer) => {
-      amts[payer] = splitAmt;
+      prevOwed.amts[payer] = splitAmt;
     });
+
     return {
       ...prevOwed,
-      amts,
     };
   });
 };
